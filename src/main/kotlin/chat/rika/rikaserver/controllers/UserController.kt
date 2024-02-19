@@ -1,9 +1,11 @@
 package chat.rika.rikaserver.controllers
 
 import chat.rika.rikaserver.entities.User
-import chat.rika.rikaserver.forms.RegisterUserForm
+import chat.rika.rikaserver.forms.LoginForm
+import chat.rika.rikaserver.forms.RegisterForm
 import chat.rika.rikaserver.services.IUserService
 import chat.rika.rikaserver.services.impl.PhoneNumberCaptchaService
+import chat.rika.rikaserver.utils.hash
 import jakarta.validation.Validator
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -26,8 +28,8 @@ class UserController(
     @GetMapping("/users")
     fun getAllUsers() = userService.getAllUsers()
 
-    @PostMapping("/user")
-    fun registerUser(@RequestBody form: RegisterUserForm): ResponseEntity<Any> {
+    @PostMapping("/user/register")
+    fun register(@RequestBody form: RegisterForm): ResponseEntity<Any> {
         val result = validator.validate(form)
         if (result.isNotEmpty())
             return ResponseEntity.badRequest().body(result.map { it.message })
@@ -40,15 +42,28 @@ class UserController(
             return ResponseEntity.badRequest().build()
         }
 
-        userService.registerUser(
+        userService.register(
             User(
                 username = form.username,
-                password = form.password,
+                password = form.password.hash(),
                 phoneNumber = form.phoneNumber,
                 role = User.Role.NORMAL
             )
         )?.let { return ResponseEntity.ok(it) }
         return ResponseEntity.status(HttpStatus.CONFLICT).build()
+    }
+
+    @PostMapping("/user/login")
+    fun login(@RequestBody form: LoginForm): ResponseEntity<Any> {
+        val result = validator.validate(form)
+        if (result.isNotEmpty())
+            return ResponseEntity.badRequest().body(result.map { it.message })
+
+        if (!userService.validateLogin(form.username, form.password))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+
+        return ResponseEntity.ok(mapOf("token" to
+                userService.generateAndStoreToken(form.username)))
     }
 
     @GetMapping("/user/captcha/{phoneNumber}")

@@ -8,5 +8,9 @@ interface IUserService {
 
     fun getAllUsers(): List<UserDto>
 
-    fun registerUser(user: User): UserDto?
+    fun register(user: User): UserDto?
+
+    fun validateLogin(username: String, password: String): Boolean
+
+    fun generateAndStoreToken(username: String): String
 }
