@@ -7,7 +7,9 @@ import chat.rika.rikaserver.services.IUserService
 import org.springframework.stereotype.Service
 
 @Service
-class UserServiceImpl(private val userRepository: UserRepository): IUserService {
+class UserServiceImpl(
+    private val userRepository: UserRepository
+): IUserService {
     override fun getUserByUsername(username: String): UserDto? =
         userRepository.findUserByUsername(username)?.toDto()
 
@@ -18,6 +20,9 @@ class UserServiceImpl(private val userRepository: UserRepository): IUserService 
 
     override fun registerUser(user: User): UserDto? {
         userRepository.findUserByUsername(user.username)?.let {
+            return null
+        }
+        userRepository.findUserByPhoneNumber(user.username)?.let {
             return null
         }
         return userRepository.save(user).toDto()

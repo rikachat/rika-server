@@ -9,6 +9,4 @@ interface IUserService {
     fun getAllUsers(): List<UserDto>
 
     fun registerUser(user: User): UserDto?
-
-
 }

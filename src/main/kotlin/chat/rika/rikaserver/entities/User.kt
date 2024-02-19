@@ -13,6 +13,9 @@ class User(
     @Column(unique = true, nullable = false)
     val username: String,
 
+    @Column(unique = true, nullable = false)
+    val phoneNumber: String,
+
     @Column(nullable = false)
     var password: String,
 
