@@ -8,6 +8,10 @@ import java.util.*
 @Service
 class PhoneNumberCaptchaService(private val cacheManager: CacheManager): ICaptchaService {
     override fun sendCaptcha(destination: String): Boolean {
+        if (cacheManager.getCache("captcha")?.get(destination) != null) {
+            // TODO Send captcha to phone number
+            return true
+        }
         val random = Random()
         val captcha = random.nextInt(999999 - 100000 + 1) + 100000
         // TODO Send captcha to phone number
