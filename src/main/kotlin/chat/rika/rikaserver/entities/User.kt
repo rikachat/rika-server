@@ -4,13 +4,16 @@ import chat.rika.rikaserver.dto.UserDto
 import jakarta.persistence.*
 
 @Entity
+@Table(name = "user_table")
 class User(
     @Id
     @GeneratedValue
-    val id: Long,
+    val id: Long? = null,
+
     @Column(unique = true, nullable = false)
     val username: String,
-    @Column(unique = true, nullable = false)
+
+    @Column(nullable = false)
     var password: String,
 
     @Enumerated(EnumType.STRING)

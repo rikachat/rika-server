@@ -1,9 +1,14 @@
 package chat.rika.rikaserver.services
 
 import chat.rika.rikaserver.dto.UserDto
-import org.springframework.stereotype.Service
+import chat.rika.rikaserver.entities.User
 
-@Service
 interface IUserService {
     fun getUserByUsername(username: String): UserDto?
+
+    fun getAllUsers(): List<UserDto>
+
+    fun registerUser(user: User): UserDto?
+
+
 }
