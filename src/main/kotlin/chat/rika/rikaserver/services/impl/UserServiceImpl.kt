@@ -42,6 +42,6 @@ class UserServiceImpl(
     override fun generateAndStoreToken(username: String): String {
         val token = UUID.randomUUID().toString()
         cacheManager.getCache("token")?.put(username, token)
-        return token
+        return "$username:$token"
     }
 }

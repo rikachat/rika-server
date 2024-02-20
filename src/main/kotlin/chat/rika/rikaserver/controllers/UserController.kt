@@ -3,8 +3,9 @@ package chat.rika.rikaserver.controllers
 import chat.rika.rikaserver.entities.User
 import chat.rika.rikaserver.forms.LoginForm
 import chat.rika.rikaserver.forms.RegisterForm
+import chat.rika.rikaserver.interceptors.Role
+import chat.rika.rikaserver.services.ICaptchaService
 import chat.rika.rikaserver.services.IUserService
-import chat.rika.rikaserver.services.impl.PhoneNumberCaptchaService
 import chat.rika.rikaserver.utils.hash
 import jakarta.validation.Validator
 import org.springframework.http.HttpStatus
@@ -14,9 +15,10 @@ import org.springframework.web.bind.annotation.*
 @RestController
 class UserController(
     private val userService: IUserService,
-    private val captchaService: PhoneNumberCaptchaService,
+    private val captchaService: ICaptchaService,
     private val validator: Validator
 ) {
+    @Role(role = User.Role.ADMIN)
     @GetMapping("/user/{username}")
     fun getUserByUsername(@PathVariable username: String): ResponseEntity<Any> {
         userService.getUserByUsername(username)?.let {
@@ -34,13 +36,9 @@ class UserController(
         if (result.isNotEmpty())
             return ResponseEntity.badRequest().body(result.map { it.message })
 
-        if (captchaService.getCaptchaByDestination(form.phoneNumber) == null) {
+        val captcha = captchaService.getCaptchaByDestination(form.phoneNumber)
+        if (captcha == null || captcha != form.captcha)
             return ResponseEntity.badRequest().build()
-        }
-
-        if (captchaService.getCaptchaByDestination(form.phoneNumber) != form.captcha) {
-            return ResponseEntity.badRequest().build()
-        }
 
         userService.register(
             User(

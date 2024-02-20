@@ -24,9 +24,9 @@ class User(
 ) {
     fun toDto() = UserDto(username, role)
 
-    enum class Role {
-        ADMIN,
-        NORMAL,
-        PRO
+    enum class Role(val priority: Int) {
+        ADMIN(0),
+        PRO(1),
+        NORMAL(2),
     }
 }

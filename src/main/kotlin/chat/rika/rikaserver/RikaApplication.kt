@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 @SpringBootApplication
 @ComponentScan(basePackages = ["chat.rika.rikaserver.services"])
 @ComponentScan(basePackages = ["chat.rika.rikaserver.controllers"])
+@ComponentScan(basePackages = ["chat.rika.rikaserver.interceptors"])
 @EnableJpaRepositories(basePackages = ["chat.rika.rikaserver.repositories"])
 @EntityScan(basePackages = ["chat.rika.rikaserver.entities"])
 @EnableCaching
